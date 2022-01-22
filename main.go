@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bwastartup/auth"
 	"bwastartup/handler"
 	"bwastartup/helper"
 	"bwastartup/user"
@@ -26,8 +27,9 @@ func main() {
 
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
+	authService := auth.NewService()
 
-	userHandler := handler.NewUserhandler(userService)
+	userHandler := handler.NewUserhandler(userService, authService)
 
 	sess := helper.ConnectAws()
 
