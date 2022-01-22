@@ -25,3 +25,18 @@ func APIResponse(message string, code int, status bool, data interface{}) Respon
 
 	return jsonResponse
 }
+
+func APIResponseLogin(message string, code int, status bool, data interface{}) Response {
+	meta := Meta{
+		Message: message,
+		Code:    code,
+		Status:  status,
+	}
+
+	jsonResponse := Response{
+		Meta: meta,
+		Data: data,
+	}
+
+	return jsonResponse
+}

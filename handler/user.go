@@ -31,6 +31,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	}
 
 	newUser, err := h.userService.RegisterUser(input)
+
 	if err != nil {
 		log.Println(err)
 		response := helper.APIResponse(err.Error(), http.StatusBadRequest, false, nil)
@@ -43,4 +44,29 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	response := helper.APIResponse("Account has been registered", http.StatusOK, true, result)
 
 	c.JSON(http.StatusOK, response)
+}
+
+func (h *userHandler) Login(c *gin.Context) {
+	var input user.LoginInput
+
+	err := c.ShouldBindJSON(&input)
+
+	if err != nil {
+		response := helper.APIResponse(err.Error(), http.StatusBadRequest, false, nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	loginUser, err := h.userService.Login(input)
+
+	if err != nil {
+		response := helper.APIResponse(err.Error(), http.StatusBadRequest, false, nil)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	response := helper.APIResponseLogin("Login Success", http.StatusOK, true, loginUser)
+
+	c.JSON(http.StatusOK, response)
+
 }
