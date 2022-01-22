@@ -2,6 +2,7 @@ package main
 
 import (
 	"bwastartup/handler"
+	"bwastartup/helper"
 	"bwastartup/user"
 	"log"
 
@@ -10,7 +11,12 @@ import (
 	"gorm.io/gorm"
 )
 
+//GetEnvWithKey : get env value
+
 func main() {
+
+	helper.LoadEnv()
+
 	dsn := "host=localhost user=postgres password=12345 dbname=bwastartup port=5432 sslmode=disable TimeZone=Asia/Shanghai"
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
@@ -23,12 +29,21 @@ func main() {
 
 	userHandler := handler.NewUserhandler(userService)
 
+	sess := helper.ConnectAws()
+
 	router := gin.Default()
+
+	router.Use(func(c *gin.Context) {
+		c.Set("sess", sess)
+		c.Next()
+	})
 
 	api := router.Group("/api/v1")
 
 	api.POST("/users", userHandler.RegisterUser)
 	api.POST("/login", userHandler.Login)
+	api.POST("/check-email", userHandler.CheckEmailIsAvailable)
+	api.POST("/upload-photo", userHandler.UploadAvatar)
 
 	router.Run()
 }
